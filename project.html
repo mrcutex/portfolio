@@ -70,8 +70,10 @@
         // DEBUG: Screen par URL dikhayein taaki check kar sakein ki URL sahi hai ya nahi
         contentDiv.innerHTML = `<p class="text-xs text-gray-600 mb-4">Attempting to fetch data from:<br>${JSON_DATA_URL}</p>`;
 
-        fetch(JSON_DATA_URL)
-            .then(response => {
+        // Add a random number to the URL to bypass the browser's cache
+fetch(`${JSON_DATA_URL}?v=${new Date().getTime()}`)
+    .then(response => {
+        
                 if (!response.ok) {
                     // Agar URL galat hai ya Gist nahi mil raha, to yeh error aayega
                     throw new Error(`Network Error: ${response.status} - ${response.statusText}`);
