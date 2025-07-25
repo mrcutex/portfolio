@@ -54,13 +54,11 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         
-        // Wahi Gist URL jo aapne index.html mein daala tha
-        const JSON_DATA_URL = 'https://gist.githubusercontent.com/mrcutex/365244ff37976ef83569c21aeca3f57e/raw/d15e497eba107a4b7475eb56ba1605ba3f22cfb7/portfolio.json'; 
+        const JSON_DATA_URL = 'https://gist.githubusercontent.com/mrcutex/365244ff37976ef83569c21aeca3f57e/raw/7d651cd2cfaf9d71b95fa8989125012cb7ffae5e/portfolio.json'; 
 
         const contentDiv = document.getElementById('blog-post-content');
         const terminalTitle = document.getElementById('terminal-title');
 
-        // 1. URL se project ki ID nikalein
         const urlParams = new URLSearchParams(window.location.search);
         const projectId = urlParams.get('id');
 
@@ -68,33 +66,39 @@
             contentDiv.innerHTML = '<p class="text-red-500">Error: Project ID not found in URL.</p>';
             return;
         }
+        
+        // DEBUG: Screen par URL dikhayein taaki check kar sakein ki URL sahi hai ya nahi
+        contentDiv.innerHTML = `<p class="text-xs text-gray-600 mb-4">Attempting to fetch data from:<br>${JSON_DATA_URL}</p>`;
 
-        // 2. JSON data fetch karein
         fetch(JSON_DATA_URL)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // Agar URL galat hai ya Gist nahi mil raha, to yeh error aayega
+                    throw new Error(`Network Error: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
-                // 3. Sahi project ko ID se dhoondein
                 const project = data.projects.find(p => p.id === projectId);
 
                 if (project) {
-                    // 4. Project milne par content ko render karein
                     document.title = project.title;
                     terminalTitle.textContent = `/home/cutex/projects/${project.id}`;
                     
                     const titleHtml = `<h1 class="text-3xl text-green-400 font-bold mb-4">${project.title}</h1>`;
-                    
-                    // Markdown content ko HTML mein convert karein
                     const blogHtml = marked.parse(project.blog_content);
 
                     contentDiv.innerHTML = titleHtml + '<div class="blog-content">' + blogHtml + '</div>';
 
                 } else {
-                    contentDiv.innerHTML = `<p class="text-red-500">Error: Project with ID '${projectId}' not found.</p>`;
+                    contentDiv.innerHTML = `<p class="text-red-500">Error: Project with ID '${projectId}' was not found in the JSON file.</p>`;
                 }
             })
             .catch(error => {
-                console.error("Error fetching data:", error);
-                contentDiv.innerHTML = '<p class="text-red-500">Failed to load project data.</p>';
+                console.error("Error details:", error);
+                // DEBUG: Screen par poora error message dikhayein
+                contentDiv.innerHTML += `<p class="text-red-500 mt-4">Failed to load project data.</p>
+                                       <p class="text-yellow-400 text-sm mt-2">Error Details: ${error.message}</p>`;
             });
     });
     </script>
