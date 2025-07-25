@@ -14,7 +14,6 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
     <style>
-        /* Your original CSS remains unchanged */
         body { font-family: 'Fira Code', monospace; background-color: #1a202c; color: #a0aec0; }
         .terminal-window { border: 1px solid #4a5568; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.1); }
         .title-bar { background-color: #2d3748; border-bottom: 1px solid #4a5568; }
@@ -133,10 +132,8 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         
-        // --- CONFIGURATION ---
         const JSON_DATA_URL = 'https://gist.githubusercontent.com/mrcutex/365244ff37976ef83569c21aeca3f57e/raw/7d651cd2cfaf9d71b95fa8989125012cb7ffae5e/portfolio.json';
 
-        // --- DYNAMIC DATA LOADING ---
         function renderProjects(projects) {
             const grid = document.getElementById('projects-grid');
             if (!grid) return;
@@ -178,11 +175,9 @@
         }
         
         function loadPortfolioData() {
-            // Add a random number to the URL to bypass the browser's cache
-fetch(`${JSON_DATA_URL}?v=${new Date().getTime()}`)
-    .then(response => {
-    
-            
+            // This trick forces the browser to download a fresh copy of the JSON file, avoiding cache issues.
+            fetch(`${JSON_DATA_URL}?v=${new Date().getTime()}`)
+                .then(response => {
                     if (!response.ok) { throw new Error('Network response was not ok'); }
                     return response.json();
                 })
