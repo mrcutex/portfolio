@@ -178,8 +178,11 @@
         }
         
         function loadPortfolioData() {
-            fetch(JSON_DATA_URL)
-                .then(response => {
+            // Add a random number to the URL to bypass the browser's cache
+fetch(`${JSON_DATA_URL}?v=${new Date().getTime()}`)
+    .then(response => {
+    
+            
                     if (!response.ok) { throw new Error('Network response was not ok'); }
                     return response.json();
                 })
